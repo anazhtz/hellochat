@@ -8,6 +8,8 @@ import 'package:hellochat/view/settings_page.dart';
 class MyDrawer extends StatelessWidget {
   const MyDrawer({super.key});
 
+  //okay da
+
   Future<void> _signOut() async {
     try {
       await FirebaseAuth.instance.signOut();
