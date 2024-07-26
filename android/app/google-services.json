@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "457931188297",
+    "project_id": "hellochat-87261",
+    "storage_bucket": "hellochat-87261.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:457931188297:android:28c9bd0e7043d743b2f798",
+        "android_client_info": {
+          "package_name": "com.example.hellochat"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCQ9REdSYS_AdvTmGd6aRkInAWu2YQk31k"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
