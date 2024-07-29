@@ -7,8 +7,7 @@ class FireHelper {
   final CollectionReference userDataRef =
       FirebaseFirestore.instance.collection('user');
 
-  User? get user => auth.currentUser;
-
+  User? get currentUser => auth.currentUser;
 
   Future<String?> signUp({
     required String email,
@@ -21,12 +20,18 @@ class FireHelper {
         password: password,
       );
 
+      final uid = response.user?.uid; 
+      if (uid == null) {
+        return "User ID is null";
+      }
+
       final data = {
+        'UID': uid, 
         'Email': email,
         'Name': name,
       };
 
-      await userDataRef.doc(response.user?.uid).set(data);
+      await userDataRef.doc(uid).set(data);
 
       return null;
     } on FirebaseAuthException catch (e) {
@@ -53,7 +58,7 @@ class FireHelper {
 
   Future<void> signOut() async {
     try {
-      await FirebaseAuth.instance.signOut();
+      await auth.signOut();
     } catch (e) {
       print("Sign out error: $e");
     }

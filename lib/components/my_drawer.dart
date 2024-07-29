@@ -1,14 +1,11 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 import 'package:hellochat/view/login_page.dart';
 import 'package:hellochat/view/settings_page.dart';
 
 class MyDrawer extends StatelessWidget {
   const MyDrawer({super.key});
-
-  //okay da
 
   Future<void> _signOut() async {
     try {
@@ -46,7 +43,7 @@ class MyDrawer extends StatelessWidget {
             children: [
               DrawerHeader(
                 decoration: BoxDecoration(
-                  color: Colors.grey, 
+                  color: Colors.grey,
                   border: Border(
                     bottom: BorderSide(
                       color: Colors.grey,
@@ -84,12 +81,7 @@ class MyDrawer extends StatelessWidget {
                     //pop the drawer
                     Navigator.pop(context);
                     // Navigate to settings page
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const SettingsPage(),
-                      ),
-                    );
+                  Get.to(() => const SettingsPage());
                   },
                 ),
               ),
