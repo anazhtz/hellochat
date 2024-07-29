@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:hellochat/components/chat_square.dart';
 import 'package:hellochat/services/chat_services/chat_service.dart';
 import '../components/custome_textfield.dart';
 import '../firebase_helper/firebase_helper.dart';
@@ -105,7 +106,7 @@ class ChatPage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: isCurrentUser ? CrossAxisAlignment.end : CrossAxisAlignment.start,
           children: [
-            Text(data["message"] ?? "No message"),
+            ChatSquare(message: data["message"], isCurrentUser: isCurrentUser)
           ],
         )), // Handle null message
     );
@@ -122,9 +123,15 @@ class ChatPage extends StatelessWidget {
             obscureText: false,
           ),
         ),
-        IconButton(
-          onPressed: sendMessage,
-          icon: const Icon(Icons.arrow_upward),
+        Container(
+          decoration: const BoxDecoration(
+            color: Colors.green,
+            shape: BoxShape.circle,
+          ),
+          child: IconButton(
+            onPressed: sendMessage,
+            icon: const Icon(Icons.arrow_upward,color: Colors.white,),
+          ),
         ),
       ],
     );
