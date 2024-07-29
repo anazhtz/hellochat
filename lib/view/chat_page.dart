@@ -5,16 +5,18 @@ import 'package:hellochat/services/chat_services/chat_service.dart';
 import '../components/custome_textfield.dart';
 import '../firebase_helper/firebase_helper.dart';
 
-class ChatPage extends StatelessWidget {
+class ChatPage extends StatefulWidget {
   final String receiverEmail;
   final String receiverID;
-  
-  ChatPage({super.key, required this.receiverEmail, required this.receiverID}) {
-    // Debug prints to check the values passed to the constructor
-    print("Receiver Email: $receiverEmail");
-    print("Receiver ID: $receiverID");
-  }
 
+  const ChatPage(
+      {super.key, required this.receiverEmail, required this.receiverID});
+
+  @override
+  State<ChatPage> createState() => _ChatPageState();
+}
+
+class _ChatPageState extends State<ChatPage> {
   // Text controller
   final TextEditingController _messageController = TextEditingController();
 
@@ -22,19 +24,49 @@ class ChatPage extends StatelessWidget {
   final ChatService _chatService = ChatService();
   final FireHelper _fireHelper = FireHelper();
 
+  // For text field focus
+  FocusNode myFocusNode = FocusNode();
+
   // Send message
   Future<void> sendMessage() async {
     if (_messageController.text.isNotEmpty) {
-      await _chatService.sendMessage(receiverID, _messageController.text);
+      await _chatService.sendMessage(
+          widget.receiverID, _messageController.text);
       _messageController.clear();
     }
+    scrollDown();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    myFocusNode.addListener(() {
+      if (myFocusNode.hasFocus) {
+        Future.delayed(const Duration(milliseconds: 500), () => scrollDown);
+      }
+    });
+    Future.delayed(Duration(milliseconds: 500),()=>scrollDown());
+  }
+
+  @override
+  void dispose() {
+    myFocusNode.dispose();
+    _messageController.dispose();
+    super.dispose();
+  }
+
+  final ScrollController _scrollController = ScrollController();
+
+  void scrollDown() {
+    _scrollController.animateTo(_scrollController.position.maxScrollExtent,
+        duration: const Duration(seconds: 1), curve: Curves.fastOutSlowIn);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(receiverEmail),
+        title: Text(widget.receiverEmail),
       ),
       body: Column(
         children: [
@@ -53,11 +85,11 @@ class ChatPage extends StatelessWidget {
   Widget _buildMessageList() {
     final currentUser = _fireHelper.currentUser;
     if (currentUser == null) {
-      return Center(child: Text("No user found"));
+      return const Center(child: Text("No user found"));
     }
 
     String senderID = currentUser.uid;
-    String receiverID = this.receiverID;
+    String receiverID = this.widget.receiverID;
 
     return StreamBuilder<QuerySnapshot>(
       stream: _chatService.getMessages(senderID, receiverID),
@@ -69,21 +101,22 @@ class ChatPage extends StatelessWidget {
 
         // Loading
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return Center(child: Text("Loading..."));
+          return const Center(child: Text("Loading..."));
         }
 
         // No data
         if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-          return Center(child: Text("No messages"));
+          return const Center(child: Text("No messages"));
         }
 
         // Build list view
         return ListView(
+          controller: _scrollController,
           children: snapshot.data!.docs.map((doc) {
             final data =
                 doc.data() as Map<String, dynamic>?; // Handle null data
             if (data == null) {
-              return SizedBox(); // Handle null data gracefully
+              return const SizedBox();
             }
             return _buildMessageItem(data);
           }).toList(),
@@ -94,21 +127,23 @@ class ChatPage extends StatelessWidget {
 
   // Build message item
   Widget _buildMessageItem(Map<String, dynamic> data) {
-
-    //is current user 
-   bool isCurrentUser = data['senderID'] == _fireHelper.currentUser?.uid;
-    //align message to the right if sender is the current user , otherwise left 
-    var alignment = isCurrentUser ? Alignment.centerRight : Alignment.centerLeft;
+    // Check if the message is from the current user
+    bool isCurrentUser = data['senderID'] == _fireHelper.currentUser?.uid;
+    // Align message to the right if sender is the current user, otherwise left
+    var alignment =
+        isCurrentUser ? Alignment.centerRight : Alignment.centerLeft;
 
     return ListTile(
       title: Container(
-        alignment: alignment,
-        child: Column(
-          crossAxisAlignment: isCurrentUser ? CrossAxisAlignment.end : CrossAxisAlignment.start,
-          children: [
-            ChatSquare(message: data["message"], isCurrentUser: isCurrentUser)
-          ],
-        )), // Handle null message
+          alignment: alignment,
+          child: Column(
+            crossAxisAlignment: isCurrentUser
+                ? CrossAxisAlignment.end
+                : CrossAxisAlignment.start,
+            children: [
+              ChatSquare(message: data["message"], isCurrentUser: isCurrentUser)
+            ],
+          )),
     );
   }
 
@@ -121,6 +156,7 @@ class ChatPage extends StatelessWidget {
             controller: _messageController,
             hintText: "Type a message",
             obscureText: false,
+            focusNode: myFocusNode,
           ),
         ),
         Container(
@@ -130,7 +166,7 @@ class ChatPage extends StatelessWidget {
           ),
           child: IconButton(
             onPressed: sendMessage,
-            icon: const Icon(Icons.arrow_upward,color: Colors.white,),
+            icon: const Icon(Icons.arrow_upward, color: Colors.white),
           ),
         ),
       ],

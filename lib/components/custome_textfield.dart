@@ -5,13 +5,14 @@ class CustomeTextfield extends StatelessWidget {
   final String hintText;
   final bool obscureText;
   final FormFieldValidator<String>? validator;
+  final FocusNode? focusNode;
 
   const CustomeTextfield({
     super.key,
     required this.hintText,
     required this.obscureText,
     required this.controller,
-    this.validator,
+    this.validator, this.focusNode,
   });
 
   @override
@@ -21,6 +22,7 @@ class CustomeTextfield extends StatelessWidget {
       child: TextFormField(
         controller: controller,
         obscureText: obscureText,
+        focusNode: focusNode,
         decoration: InputDecoration(
           enabledBorder: OutlineInputBorder(
             borderSide: BorderSide(color: Theme.of(context).colorScheme.tertiary),
