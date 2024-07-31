@@ -1,19 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:hellochat/components/user_tile.dart';
-import 'package:hellochat/firebase_helper/firebase_helper.dart';
 import 'package:hellochat/services/chat_services/chat_service.dart';
 
-class BlockedUsersPage extends StatefulWidget {
-  const BlockedUsersPage({super.key});
+class BlockedUsersPage extends StatelessWidget {
+  BlockedUsersPage({super.key});
 
-  @override
-  _BlockedUsersPageState createState() => _BlockedUsersPageState();
-}
-
-class _BlockedUsersPageState extends State<BlockedUsersPage> {
   // Chat and auth service
   final ChatService _chatService = ChatService();
-  final FireHelper _fireHelper = FireHelper();
 
   void _showUnblockBox(BuildContext context, String userID) {
     showDialog(
@@ -28,11 +21,10 @@ class _BlockedUsersPageState extends State<BlockedUsersPage> {
                     child: const Text("Cancel")),
                 TextButton(
                     onPressed: () {
-                      _chatService.unblockUser(userID).then((_) {
-                        Navigator.pop(context);
-                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("User unblocked!")));
-                        setState(() {}); // Trigger a rebuild to reflect the changes
-                      });
+                      _chatService.unblockUser(userID);
+                      Navigator.pop(context);
+                      ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text("User unblocked!")));
                     },
                     child: const Text("Unblock")),
               ],

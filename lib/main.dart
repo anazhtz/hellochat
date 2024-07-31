@@ -1,10 +1,10 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:hellochat/services/auth/login_or_register.dart';
 import 'package:hellochat/firebase_options.dart';
 import 'package:hellochat/theme/theme_provider.dart';
 import 'package:provider/provider.dart';
+import 'package:hellochat/view/splash_screen.dart'; // Import the SplashScreen
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -24,7 +24,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
-      home: const LoginOrRegister(),
+      home: const SplashScreen(), // Show SplashScreen initially
       theme: Provider.of<ThemeProvider>(context).themeData,
     );
   }
