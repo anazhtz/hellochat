@@ -9,7 +9,8 @@ class ChatPage extends StatefulWidget {
   final String receiverEmail;
   final String receiverID;
 
-  const ChatPage({super.key, required this.receiverEmail, required this.receiverID});
+  const ChatPage(
+      {super.key, required this.receiverEmail, required this.receiverID});
 
   @override
   State<ChatPage> createState() => _ChatPageState();
@@ -60,7 +61,8 @@ class _ChatPageState extends State<ChatPage> {
   // Send message
   Future<void> sendMessage() async {
     if (_messageController.text.isNotEmpty) {
-      await _chatService.sendMessage(widget.receiverID, _messageController.text);
+      await _chatService.sendMessage(
+          widget.receiverID, _messageController.text);
       _messageController.clear();
       scrollDown();
     }
@@ -76,11 +78,59 @@ class _ChatPageState extends State<ChatPage> {
     }
   }
 
+  void _clearChat() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text("Clear Chat"),
+        content: const Text("Are you sure you want to clear this chat?"),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text("Cancel"),
+          ),
+          TextButton(
+            onPressed: () async {
+              await _chatService.clearChat(widget.receiverID);
+              Navigator.pop(context);
+            },
+            child: const Text("Clear"),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.receiverEmail),
+        actions: [
+          PopupMenuButton<String>(
+            onSelected: (value) {
+              if (value == 'clearChat') {
+                _clearChat();
+              }
+              // Handle other menu options here
+            },
+            itemBuilder: (BuildContext context) {
+              return [
+                const PopupMenuItem<String>(
+                  value: 'clearChat',
+                  child: Row(
+                    children: [
+                      Icon(Icons.delete_forever),
+                      SizedBox(width: 8),
+                      Text('Clear Chat'),
+                    ],
+                  ),
+                ),
+                // Add other menu items here if needed
+              ];
+            },
+          ),
+        ],
       ),
       body: Column(
         children: [
@@ -127,7 +177,8 @@ class _ChatPageState extends State<ChatPage> {
         return ListView(
           controller: _scrollController,
           children: snapshot.data!.docs.map((doc) {
-            final data = doc.data() as Map<String, dynamic>?; // Handle null data
+            final data =
+                doc.data() as Map<String, dynamic>?; // Handle null data
             if (data == null) {
               return const SizedBox();
             }
@@ -143,13 +194,15 @@ class _ChatPageState extends State<ChatPage> {
     // Check if the message is from the current user
     bool isCurrentUser = data['senderID'] == _fireHelper.currentUser?.uid;
     // Align message to the right if sender is the current user, otherwise left
-    var alignment = isCurrentUser ? Alignment.centerRight : Alignment.centerLeft;
+    var alignment =
+        isCurrentUser ? Alignment.centerRight : Alignment.centerLeft;
 
     return ListTile(
       title: Container(
         alignment: alignment,
         child: Column(
-          crossAxisAlignment: isCurrentUser ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+          crossAxisAlignment:
+              isCurrentUser ? CrossAxisAlignment.end : CrossAxisAlignment.start,
           children: [
             ChatSquare(
               message: data["message"],

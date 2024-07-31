@@ -161,4 +161,45 @@ class ChatService {
 
     yield blockedUsers;
   }
+
+   // CLEAR CHAT
+  Future<void> clearChat(String receiverID) async {
+    final currentUser = _auth.currentUser;
+    if (currentUser == null) return;
+
+    final senderID = currentUser.uid;
+
+    // Construct chat room ID
+    List<String> ids = [senderID, receiverID];
+    ids.sort();
+    String chatRoomID = ids.join('_');
+
+    // Delete messages in both directions
+    final batch = _firestore.batch();
+
+    // Messages from sender to receiver
+    final senderToReceiverMessages = _firestore
+        .collection('chat_rooms')
+        .doc(chatRoomID)
+        .collection('messages')
+        .get();
+    final senderToReceiverDocs = await senderToReceiverMessages;
+    for (var doc in senderToReceiverDocs.docs) {
+      batch.delete(doc.reference);
+    }
+
+    // Messages from receiver to sender
+    final receiverToSenderMessages = _firestore
+        .collection('chat_rooms')
+        .doc(chatRoomID)
+        .collection('messages')
+        .get();
+    final receiverToSenderDocs = await receiverToSenderMessages;
+    for (var doc in receiverToSenderDocs.docs) {
+      batch.delete(doc.reference);
+    }
+
+    await batch.commit();
+  }
+
 }
