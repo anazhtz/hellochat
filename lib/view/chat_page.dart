@@ -45,7 +45,7 @@ class _ChatPageState extends State<ChatPage> {
         Future.delayed(const Duration(milliseconds: 500), () => scrollDown);
       }
     });
-    Future.delayed(Duration(milliseconds: 500),()=>scrollDown());
+    Future.delayed(Duration(milliseconds: 500), () => scrollDown());
   }
 
   @override
@@ -82,70 +82,78 @@ class _ChatPageState extends State<ChatPage> {
   }
 
   // Build message list
-  Widget _buildMessageList() {
-    final currentUser = _fireHelper.currentUser;
-    if (currentUser == null) {
-      return const Center(child: Text("No user found"));
-    }
-
-    String senderID = currentUser.uid;
-    String receiverID = this.widget.receiverID;
-
-    return StreamBuilder<QuerySnapshot>(
-      stream: _chatService.getMessages(senderID, receiverID),
-      builder: (context, snapshot) {
-        // Error
-        if (snapshot.hasError) {
-          return Center(child: Text("Error: ${snapshot.error}"));
-        }
-
-        // Loading
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: Text("Loading..."));
-        }
-
-        // No data
-        if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-          return const Center(child: Text("No messages"));
-        }
-
-        // Build list view
-        return ListView(
-          controller: _scrollController,
-          children: snapshot.data!.docs.map((doc) {
-            final data =
-                doc.data() as Map<String, dynamic>?; // Handle null data
-            if (data == null) {
-              return const SizedBox();
-            }
-            return _buildMessageItem(data);
-          }).toList(),
-        );
-      },
-    );
+ // Build message list
+Widget _buildMessageList() {
+  final currentUser = _fireHelper.currentUser;
+  if (currentUser == null) {
+    return const Center(child: Text("No user found"));
   }
+
+  String senderID = currentUser.uid;
+  String receiverID = this.widget.receiverID;
+
+  return StreamBuilder<QuerySnapshot>(
+    stream: _chatService.getMessages(senderID, receiverID),
+    builder: (context, snapshot) {
+      // Error
+      if (snapshot.hasError) {
+        return Center(child: Text("Error: ${snapshot.error}"));
+      }
+
+      // Loading
+      if (snapshot.connectionState == ConnectionState.waiting) {
+        return const Center(child: Text("Loading..."));
+      }
+
+      // No data
+      if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+        return const Center(child: Text("No messages"));
+      }
+
+      // Build list view
+      return ListView(
+        controller: _scrollController,
+        children: snapshot.data!.docs.map((doc) {
+          final data = doc.data() as Map<String, dynamic>?; // Handle null data
+          if (data == null) {
+            return const SizedBox();
+          }
+          return _buildMessageItem(data, doc.id); // Pass doc.id as messageId
+        }).toList(),
+      );
+    },
+  );
+}
+
 
   // Build message item
-  Widget _buildMessageItem(Map<String, dynamic> data) {
-    // Check if the message is from the current user
-    bool isCurrentUser = data['senderID'] == _fireHelper.currentUser?.uid;
-    // Align message to the right if sender is the current user, otherwise left
-    var alignment =
-        isCurrentUser ? Alignment.centerRight : Alignment.centerLeft;
+// Build message item
+Widget _buildMessageItem(Map<String, dynamic> data, String messageId) {
+  // Check if the message is from the current user
+  bool isCurrentUser = data['senderID'] == _fireHelper.currentUser?.uid;
+  // Align message to the right if sender is the current user, otherwise left
+  var alignment =
+      isCurrentUser ? Alignment.centerRight : Alignment.centerLeft;
 
-    return ListTile(
-      title: Container(
-          alignment: alignment,
-          child: Column(
-            crossAxisAlignment: isCurrentUser
-                ? CrossAxisAlignment.end
-                : CrossAxisAlignment.start,
-            children: [
-              ChatSquare(message: data["message"], isCurrentUser: isCurrentUser)
-            ],
-          )),
-    );
-  }
+  return ListTile(
+    title: Container(
+        alignment: alignment,
+        child: Column(
+          crossAxisAlignment: isCurrentUser
+              ? CrossAxisAlignment.end
+              : CrossAxisAlignment.start,
+          children: [
+            ChatSquare(
+              message: data["message"], 
+              isCurrentUser: isCurrentUser,
+              messageId: messageId, // Pass messageId here
+              userID: data["senderID"],
+            ),
+          ],
+        )),
+  );
+}
+
 
   // Message input
   Widget _buildUserInput() {
