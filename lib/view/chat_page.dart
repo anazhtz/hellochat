@@ -9,8 +9,7 @@ class ChatPage extends StatefulWidget {
   final String receiverEmail;
   final String receiverID;
 
-  const ChatPage(
-      {super.key, required this.receiverEmail, required this.receiverID});
+  const ChatPage({super.key, required this.receiverEmail, required this.receiverID});
 
   @override
   State<ChatPage> createState() => _ChatPageState();
@@ -27,39 +26,54 @@ class _ChatPageState extends State<ChatPage> {
   // For text field focus
   FocusNode myFocusNode = FocusNode();
 
-  // Send message
-  Future<void> sendMessage() async {
-    if (_messageController.text.isNotEmpty) {
-      await _chatService.sendMessage(
-          widget.receiverID, _messageController.text);
-      _messageController.clear();
-    }
-    scrollDown();
-  }
+  // Scroll controller
+  final ScrollController _scrollController = ScrollController();
 
   @override
   void initState() {
     super.initState();
+
+    // Delay scroll operation until after the widget has been built
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      scrollDown();
+    });
+
     myFocusNode.addListener(() {
       if (myFocusNode.hasFocus) {
-        Future.delayed(const Duration(milliseconds: 500), () => scrollDown);
+        Future.delayed(const Duration(milliseconds: 500), () {
+          if (_scrollController.hasClients) {
+            scrollDown();
+          }
+        });
       }
     });
-    Future.delayed(Duration(milliseconds: 500), () => scrollDown());
   }
 
   @override
   void dispose() {
     myFocusNode.dispose();
     _messageController.dispose();
+    _scrollController.dispose();
     super.dispose();
   }
 
-  final ScrollController _scrollController = ScrollController();
+  // Send message
+  Future<void> sendMessage() async {
+    if (_messageController.text.isNotEmpty) {
+      await _chatService.sendMessage(widget.receiverID, _messageController.text);
+      _messageController.clear();
+      scrollDown();
+    }
+  }
 
   void scrollDown() {
-    _scrollController.animateTo(_scrollController.position.maxScrollExtent,
-        duration: const Duration(seconds: 1), curve: Curves.fastOutSlowIn);
+    if (_scrollController.hasClients) {
+      _scrollController.animateTo(
+        _scrollController.position.maxScrollExtent,
+        duration: const Duration(seconds: 1),
+        curve: Curves.fastOutSlowIn,
+      );
+    }
   }
 
   @override
@@ -82,78 +96,72 @@ class _ChatPageState extends State<ChatPage> {
   }
 
   // Build message list
- // Build message list
-Widget _buildMessageList() {
-  final currentUser = _fireHelper.currentUser;
-  if (currentUser == null) {
-    return const Center(child: Text("No user found"));
+  Widget _buildMessageList() {
+    final currentUser = _fireHelper.currentUser;
+    if (currentUser == null) {
+      return const Center(child: Text("No user found"));
+    }
+
+    String senderID = currentUser.uid;
+    String receiverID = widget.receiverID;
+
+    return StreamBuilder<QuerySnapshot>(
+      stream: _chatService.getMessages(senderID, receiverID),
+      builder: (context, snapshot) {
+        // Error
+        if (snapshot.hasError) {
+          return Center(child: Text("Error: ${snapshot.error}"));
+        }
+
+        // Loading
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: Text("Loading..."));
+        }
+
+        // No data
+        if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+          return const Center(child: Text("No messages"));
+        }
+
+        // Build list view
+        return ListView(
+          controller: _scrollController,
+          children: snapshot.data!.docs.map((doc) {
+            final data = doc.data() as Map<String, dynamic>?; // Handle null data
+            if (data == null) {
+              return const SizedBox();
+            }
+            return _buildMessageItem(data, doc.id); // Pass doc.id as messageId
+          }).toList(),
+        );
+      },
+    );
   }
 
-  String senderID = currentUser.uid;
-  String receiverID = this.widget.receiverID;
-
-  return StreamBuilder<QuerySnapshot>(
-    stream: _chatService.getMessages(senderID, receiverID),
-    builder: (context, snapshot) {
-      // Error
-      if (snapshot.hasError) {
-        return Center(child: Text("Error: ${snapshot.error}"));
-      }
-
-      // Loading
-      if (snapshot.connectionState == ConnectionState.waiting) {
-        return const Center(child: Text("Loading..."));
-      }
-
-      // No data
-      if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-        return const Center(child: Text("No messages"));
-      }
-
-      // Build list view
-      return ListView(
-        controller: _scrollController,
-        children: snapshot.data!.docs.map((doc) {
-          final data = doc.data() as Map<String, dynamic>?; // Handle null data
-          if (data == null) {
-            return const SizedBox();
-          }
-          return _buildMessageItem(data, doc.id); // Pass doc.id as messageId
-        }).toList(),
-      );
-    },
-  );
-}
-
-
   // Build message item
-// Build message item
-Widget _buildMessageItem(Map<String, dynamic> data, String messageId) {
-  // Check if the message is from the current user
-  bool isCurrentUser = data['senderID'] == _fireHelper.currentUser?.uid;
-  // Align message to the right if sender is the current user, otherwise left
-  var alignment =
-      isCurrentUser ? Alignment.centerRight : Alignment.centerLeft;
+  Widget _buildMessageItem(Map<String, dynamic> data, String messageId) {
+    // Check if the message is from the current user
+    bool isCurrentUser = data['senderID'] == _fireHelper.currentUser?.uid;
+    // Align message to the right if sender is the current user, otherwise left
+    var alignment = isCurrentUser ? Alignment.centerRight : Alignment.centerLeft;
 
-  return ListTile(
-    title: Container(
+    return ListTile(
+      title: Container(
         alignment: alignment,
         child: Column(
-          crossAxisAlignment: isCurrentUser
-              ? CrossAxisAlignment.end
-              : CrossAxisAlignment.start,
+          crossAxisAlignment: isCurrentUser ? CrossAxisAlignment.end : CrossAxisAlignment.start,
           children: [
             ChatSquare(
-              message: data["message"], 
+              message: data["message"],
               isCurrentUser: isCurrentUser,
               messageId: messageId, // Pass messageId here
               userID: data["senderID"],
             ),
           ],
-        )),
-  );
-}
-
+        ),
+      ),
+    );
+  }
 
   // Message input
   Widget _buildUserInput() {

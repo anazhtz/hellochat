@@ -37,13 +37,16 @@ class ChatSquare extends StatelessWidget {
               ListTile(
                 leading: const Icon(Icons.block),
                 title: const Text("Block User"),
-                onTap: () {},
+                onTap: () {
+                  Navigator.pop(context);
+                  _blockUser(context,userID);
+                },
               ),
               //cancel
               ListTile(
                 leading: const Icon(Icons.cancel),
                 title: const Text("Cancel"),
-                onTap: () {},
+                onTap: () => Navigator.pop(context),
               ),
             ],
           ));
@@ -79,6 +82,33 @@ class ChatSquare extends StatelessWidget {
   }
 
   //blocked user
+
+  void _blockUser(BuildContext context, String userID) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text("Block User"),
+        content: const Text("Are you sure you want to block this user?"),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text("Cancel"),
+          ),
+          //block button
+          TextButton(
+            onPressed: () {
+              ChatService().blockUser(userID);
+              Navigator.pop(context);
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text("User Blocked")),
+              );
+            },
+            child: const Text("Block"),
+          ),
+        ],
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
