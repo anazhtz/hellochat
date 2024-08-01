@@ -19,7 +19,7 @@ class HomePage extends StatelessWidget {
       appBar: AppBar(
         centerTitle: true,
         title: const Text(
-          "U S E R S",
+          "H E L L O",
           style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
       ),

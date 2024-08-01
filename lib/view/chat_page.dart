@@ -191,30 +191,31 @@ class _ChatPageState extends State<ChatPage> {
 
   // Build message item
   Widget _buildMessageItem(Map<String, dynamic> data, String messageId) {
-    // Check if the message is from the current user
-    bool isCurrentUser = data['senderID'] == _fireHelper.currentUser?.uid;
-    // Align message to the right if sender is the current user, otherwise left
-    var alignment =
-        isCurrentUser ? Alignment.centerRight : Alignment.centerLeft;
+  bool isCurrentUser = data['senderID'] == _fireHelper.currentUser?.uid;
+  var alignment = isCurrentUser ? Alignment.centerRight : Alignment.centerLeft;
 
-    return ListTile(
-      title: Container(
-        alignment: alignment,
-        child: Column(
-          crossAxisAlignment:
-              isCurrentUser ? CrossAxisAlignment.end : CrossAxisAlignment.start,
-          children: [
-            ChatSquare(
-              message: data["message"],
-              isCurrentUser: isCurrentUser,
-              messageId: messageId, // Pass messageId here
-              userID: data["senderID"],
-            ),
-          ],
-        ),
+  // Get the timestamp
+  Timestamp timestamp = data['timestamp'];
+
+  return ListTile(
+    title: Container(
+      alignment: alignment,
+      child: Column(
+        crossAxisAlignment: isCurrentUser ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+        children: [
+          ChatSquare(
+            message: data["message"],
+            isCurrentUser: isCurrentUser,
+            messageId: messageId,
+            userID: data["senderID"],
+            timestamp: timestamp, // Pass the timestamp here
+          ),
+        ],
       ),
-    );
-  }
+    ),
+  );
+}
+
 
   // Message input
   Widget _buildUserInput() {

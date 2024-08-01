@@ -46,14 +46,11 @@ class ChatService {
     });
   }
 
-  // SEND MESSAGE
   Future<void> sendMessage(String receiverID, String message) async {
-    // Get current user info
     final String currentUserID = _auth.currentUser!.uid;
     final String currentUserEmail = _auth.currentUser!.email!;
     final Timestamp timestamp = Timestamp.now();
 
-    // Create a new message
     Message newMessage = Message(
       senderID: currentUserID,
       senderEmail: currentUserEmail,
@@ -62,12 +59,10 @@ class ChatService {
       timestamp: timestamp,
     );
 
-    // Construct a chat room ID for the two users (sorted to ensure uniqueness)
     List<String> ids = [currentUserID, receiverID];
     ids.sort();
     String chatRoomID = ids.join('_');
 
-    // Add new message to database
     await _firestore
         .collection("chat_rooms")
         .doc(chatRoomID)
@@ -77,7 +72,6 @@ class ChatService {
 
   // GET MESSAGES
   Stream<QuerySnapshot> getMessages(String userID, String otherUserID) {
-    // Construct a chat room ID for the two users
     List<String> ids = [userID, otherUserID];
     ids.sort();
     String chatRoomID = ids.join('_');
@@ -86,7 +80,7 @@ class ChatService {
         .collection("chat_rooms")
         .doc(chatRoomID)
         .collection("messages")
-        .orderBy("timestamp", descending: false)
+        .orderBy("timestamp", descending: false) // Order by timestamp
         .snapshots();
   }
 
@@ -162,7 +156,7 @@ class ChatService {
     yield blockedUsers;
   }
 
-   // CLEAR CHAT
+  // CLEAR CHAT
   Future<void> clearChat(String receiverID) async {
     final currentUser = _auth.currentUser;
     if (currentUser == null) return;
@@ -201,5 +195,4 @@ class ChatService {
 
     await batch.commit();
   }
-
 }
