@@ -81,7 +81,7 @@ class _LoginPageState extends State<LoginPage> {
                 const SizedBox(height: 50),
                 //welcome message
                 Text(
-                  "Welcome back, you've been missed",
+                  "Welcome to HelloChat",
                   style: TextStyle(
                       color: Theme.of(context).colorScheme.primary,
                       fontSize: 16),
