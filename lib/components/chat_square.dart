@@ -156,7 +156,7 @@ class ChatSquare extends StatelessWidget {
               message,
               style: TextStyle(color: textColor),
             ),
-            SizedBox(height: 4), 
+            const SizedBox(height: 4), 
             Text(
               formattedTime,
               style: TextStyle(

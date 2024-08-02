@@ -4,7 +4,7 @@ import 'package:get/get.dart';
 import 'package:hellochat/firebase_options.dart';
 import 'package:hellochat/theme/theme_provider.dart';
 import 'package:provider/provider.dart';
-import 'package:hellochat/view/splash_screen.dart'; // Import the SplashScreen
+import 'package:hellochat/view/splash_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
