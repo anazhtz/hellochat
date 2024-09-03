@@ -185,13 +185,13 @@ class ChatSquare extends StatelessWidget {
                   children: [
                     Text(
                       message,
-                      style: TextStyle(color: textColor),
+                      style: TextStyle(color: textColor,fontWeight: FontWeight.w500),
                     ),
                     const SizedBox(height: 4),
                     Text(
                       formattedTime,
                       style: TextStyle(
-                        color: isCurrentUser ? Colors.black87 : Colors.black54,
+                        color: isCurrentUser ? Colors.black54 : Colors.black54,
                         fontSize: 12,
                       ),
                     ),
