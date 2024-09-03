@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:hellochat/components/appcolor.dart';
 import 'package:hellochat/theme/theme_provider.dart';
 import 'package:provider/provider.dart';
 
@@ -10,6 +11,9 @@ class SettingsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final themeProvider = Provider.of<ThemeProvider>(context);
+    final isDarkMode = themeProvider.isDarkMode;
+
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
@@ -17,72 +21,77 @@ class SettingsPage extends StatelessWidget {
           "S E T T I N G S",
           style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
+        backgroundColor: AppColors.primary,
       ),
       body: Center(
         child: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 600),
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              //dark mode button
-              Container(
-                decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.secondary,
+              // Dark Mode Section
+              Card(
+                elevation: 6,
+                margin: const EdgeInsets.all(16),
+                shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
-                margin: const EdgeInsets.all(25),
-                padding: const EdgeInsets.all(16),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    // Dark mode
-                    Text(
-                      "Dark Mode",
-                      style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: Theme.of(context).colorScheme.inversePrimary),
+                child: ListTile(
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 16),
+                  leading: const Icon(
+                    Icons.brightness_6,
+                    color: AppColors.primary,
+                    size: 28,
+                  ),
+                  title: const Text(
+                    "Dark Mode",
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 18,
+                      color: AppColors.textPrimary,
                     ),
-                    CupertinoSwitch(
-                      value: Provider.of<ThemeProvider>(context).isDarkMode,
-                      onChanged: (value) {
-                        Provider.of<ThemeProvider>(context, listen: false)
-                            .toggleTheme();
-                      },
-                    ),
-                  ],
+                  ),
+                  trailing: CupertinoSwitch(
+                    value: isDarkMode,
+                    onChanged: (value) {
+                      themeProvider.toggleTheme();
+                    },
+                  ),
                 ),
               ),
-              //blocked users list
-              Container(
-                decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.secondary,
+              // Blocked Users Section
+              Card(
+                elevation: 2,
+                margin: const EdgeInsets.all(16),
+                shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
-                margin: const EdgeInsets.all(25),
-                padding: const EdgeInsets.all(16),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    // blockes users
-                    Text(
-                      "Blocked Users",
-                      style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: Theme.of(context).colorScheme.inversePrimary),
+                child: ListTile(
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 16),
+                  leading: const Icon(
+                    Icons.block,
+                    color: AppColors.primary,
+                    size: 28,
+                  ),
+                  title: const Text(
+                    "Blocked Users",
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 18,
+                      color: AppColors.textPrimary,
                     ),
-                    //button to go to blocked users page
-                    IconButton(
-                      onPressed: () => Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => BlockedUsersPage(),
-                        ),
-                      ),
-                      icon: Icon(
-                        Icons.arrow_forward_ios_rounded,
-                        color: Theme.of(context).colorScheme.primary,
-                      ),
-                    )
-                  ],
+                  ),
+                  trailing: const Icon(
+                    Icons.arrow_forward_ios_rounded,
+                    color: AppColors.primary,
+                    size: 20,
+                  ),
+                  onTap: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) =>  BlockedUsersPage(),
+                    ),
+                  ),
                 ),
               ),
             ],

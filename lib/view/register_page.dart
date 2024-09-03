@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:hellochat/components/appcolor.dart';
 import 'package:hellochat/components/custome_textfield.dart';
 import 'package:hellochat/components/my_button.dart';
 import 'package:hellochat/firebase_helper/firebase_helper.dart';
@@ -97,7 +98,7 @@ class _RegisterPageState extends State<RegisterPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.surface,
+      backgroundColor: AppColors.primary,
       body: Center(
         child: SingleChildScrollView(
           child: Form(
@@ -109,7 +110,7 @@ class _RegisterPageState extends State<RegisterPage> {
                 Icon(
                   Icons.message,
                   size: 60,
-                  color: Theme.of(context).colorScheme.primary,
+                  color: Colors.white,
                 ),
                 const SizedBox(
                   height: 50,
@@ -118,7 +119,7 @@ class _RegisterPageState extends State<RegisterPage> {
                 Text(
                   "Let's create an account for you",
                   style: TextStyle(
-                      color: Theme.of(context).colorScheme.primary,
+                      color: Colors.white,
                       fontSize: 16),
                 ),
                 const SizedBox(
@@ -182,13 +183,13 @@ class _RegisterPageState extends State<RegisterPage> {
                     Text(
                       "Already have an account? ",
                       style: TextStyle(
-                          color: Theme.of(context).colorScheme.primary),
+                          color: Colors.white54),
                     ),
                     GestureDetector(
                       onTap: widget.onTap,
                       child: const Text(
                         "Login now",
-                        style: TextStyle(fontWeight: FontWeight.bold),
+                        style: TextStyle(fontWeight: FontWeight.bold,color: Colors.white),
                       ),
                     )
                   ],

@@ -36,7 +36,7 @@ class MyDrawer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Drawer(
-      backgroundColor: AppColors.background, 
+      backgroundColor: AppColors.background,
       child: Column(
         children: [
           Container(
@@ -46,7 +46,8 @@ class MyDrawer extends StatelessWidget {
                 DrawerHeader(
                   decoration: const BoxDecoration(
                     color: AppColors.primary,
-                    borderRadius: BorderRadius.vertical(bottom: Radius.circular(16)), // Rounded corners
+                    borderRadius: BorderRadius.vertical(
+                        bottom: Radius.circular(16)), // Rounded corners
                   ),
                   child: Row(
                     children: [
@@ -60,44 +61,48 @@ class MyDrawer extends StatelessWidget {
                       Expanded(
                         child: Text(
                           'Hello, User!',
-                          style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                              ),
+                          style:
+                              Theme.of(context).textTheme.titleLarge?.copyWith(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                  ),
                         ),
                       ),
                     ],
                   ),
                 ),
-               Column(
-  children: [
-    ListTile(
-      contentPadding: const EdgeInsets.symmetric(horizontal: 16),
-      tileColor: AppColors.primaryLight,
-      title: const Text("H O M E", style: TextStyle(color: Colors.white)),
-      leading: const Icon(Icons.home, color: Colors.white),
-      onTap: () {
-        Navigator.pop(context);
-      },
-    ),
-    Container(
-      margin: const EdgeInsets.symmetric(horizontal: 16),
-      height: 2,
-      color: Colors.white.withOpacity(0.3), // Decorative line
-    ),
-    ListTile(
-      contentPadding: const EdgeInsets.symmetric(horizontal: 16),
-      tileColor: AppColors.primaryLight,
-      title: const Text("S E T T I N G S", style: TextStyle(color: Colors.white)),
-      leading: const Icon(Icons.settings, color: Colors.white),
-      onTap: () {
-        Navigator.pop(context);
-        Get.to(() => const SettingsPage());
-      },
-    ),
-  ],
-)
-
+                Column(
+                  children: [
+                    ListTile(
+                      contentPadding:
+                          const EdgeInsets.symmetric(horizontal: 16),
+                      tileColor: AppColors.primaryLight,
+                      title: const Text("H O M E",
+                          style: TextStyle(color: Colors.white)),
+                      leading: const Icon(Icons.home, color: Colors.white),
+                      onTap: () {
+                        Navigator.pop(context);
+                      },
+                    ),
+                    Container(
+                      margin: const EdgeInsets.symmetric(horizontal: 16),
+                      height: 2,
+                      color: Colors.white.withOpacity(0.3), // Decorative line
+                    ),
+                    ListTile(
+                      contentPadding:
+                          const EdgeInsets.symmetric(horizontal: 16),
+                      tileColor: AppColors.primaryLight,
+                      title: const Text("S E T T I N G S",
+                          style: TextStyle(color: Colors.white)),
+                      leading: const Icon(Icons.settings, color: Colors.white),
+                      onTap: () {
+                        Navigator.pop(context);
+                        Get.to(() => const SettingsPage());
+                      },
+                    ),
+                  ],
+                )
               ],
             ),
           ),

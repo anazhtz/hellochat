@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hellochat/components/appcolor.dart';
 
 class MyButton extends StatelessWidget {
   final String text;
@@ -18,7 +19,7 @@ class MyButton extends StatelessWidget {
       onTap: isLoading ? null : onTap,
       child: Container(
         decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.primary,
+          color: AppColors.primaryLight,
           borderRadius: BorderRadius.circular(8),
           boxShadow: [
             BoxShadow(

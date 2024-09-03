@@ -25,15 +25,15 @@ class CustomeTextfield extends StatelessWidget {
         focusNode: focusNode,
         decoration: InputDecoration(
           enabledBorder: OutlineInputBorder(
-            borderSide: BorderSide(color: Theme.of(context).colorScheme.tertiary),
+            borderSide: BorderSide(color: Theme.of(context).colorScheme.tertiary), // Update border color
           ),
           focusedBorder: OutlineInputBorder(
-            borderSide: BorderSide(color: Theme.of(context).colorScheme.primary),
+            borderSide: BorderSide(color: Theme.of(context).colorScheme.primary), // Update border color
           ),
-          fillColor: Theme.of(context).colorScheme.secondary,
+          fillColor: Theme.of(context).colorScheme.secondary, // Update fill color
           filled: true,
           hintText: hintText,
-          hintStyle: TextStyle(color: Theme.of(context).colorScheme.primary),
+          hintStyle: TextStyle(color: Theme.of(context).colorScheme.primary), // Update hint text color
         ),
         validator: validator,
       ),

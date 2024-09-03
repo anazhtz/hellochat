@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:hellochat/components/appcolor.dart';
 import 'package:hellochat/components/custome_textfield.dart';
 import 'package:hellochat/components/my_button.dart';
 import 'package:hellochat/firebase_helper/firebase_helper.dart';
@@ -43,18 +44,22 @@ class _LoginPageState extends State<LoginPage> {
           "Success",
           "Login successful!",
           snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: Colors.green,
+          backgroundColor: Theme.of(context)
+              .colorScheme
+              .surface, // Adjust this color as needed
           colorText: Colors.white,
         );
         Future.delayed(const Duration(seconds: 1), () {
-          Get.to(() =>  HomePage());
+          Get.to(() => HomePage());
         });
       } else {
         Get.snackbar(
           "Error",
           "Invalid email or password",
           snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: Colors.red,
+          backgroundColor: Theme.of(context)
+              .colorScheme
+              .error, // Adjust this color as needed
           colorText: Colors.white,
         );
       }
@@ -64,7 +69,7 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.surface,
+      backgroundColor: AppColors.primary, // Update the background color
       body: Center(
         child: SingleChildScrollView(
           child: Form(
@@ -73,18 +78,16 @@ class _LoginPageState extends State<LoginPage> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 //logo
-                Icon(
+                const Icon(
                   Icons.message,
                   size: 60,
-                  color: Theme.of(context).colorScheme.primary,
+                  color: Colors.white,
                 ),
                 const SizedBox(height: 50),
                 //welcome message
-                Text(
+                const Text(
                   "Welcome to HelloChat",
-                  style: TextStyle(
-                      color: Theme.of(context).colorScheme.primary,
-                      fontSize: 16),
+                  style: TextStyle(color: Colors.white, fontSize: 16),
                 ),
                 const SizedBox(height: 25),
                 //email textfield
@@ -131,15 +134,15 @@ class _LoginPageState extends State<LoginPage> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text(
-                      "Not a member? ",
-                      style: TextStyle(color: Theme.of(context).colorScheme.primary),
-                    ),
+                    const Text("Not a member? ",
+                        style: TextStyle(color: Colors.white54)),
                     GestureDetector(
                       onTap: widget.onTap,
                       child: const Text(
                         "Register now",
-                        style: TextStyle(fontWeight: FontWeight.bold),
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white), // Update color
                       ),
                     ),
                   ],
