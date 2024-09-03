@@ -118,12 +118,12 @@ class ChatSquare extends StatelessWidget {
     if (isCurrentUser) {
       backgroundColor = isDarkMode
           ? Colors.lightBlue.shade300
-          : Colors.lightGreenAccent.shade100;
+          : Colors.grey.shade300;
       textColor = Colors.black;
     } else {
       backgroundColor = isDarkMode
           ? Colors.deepPurple.shade200
-          : Colors.orangeAccent.shade100;
+          : Colors.white;
       textColor = isDarkMode ? Colors.black : Colors.black;
     }
 
