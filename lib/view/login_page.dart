@@ -44,9 +44,7 @@ class _LoginPageState extends State<LoginPage> {
           "Success",
           "Login successful!",
           snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: Theme.of(context)
-              .colorScheme
-              .surface, // Adjust this color as needed
+          backgroundColor: Colors.green, // Adjust this color as needed
           colorText: Colors.white,
         );
         Future.delayed(const Duration(seconds: 1), () {

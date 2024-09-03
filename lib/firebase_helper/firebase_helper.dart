@@ -40,6 +40,15 @@ class FireHelper {
       return "An unexpected error occurred: ${e.toString()}";
     }
   }
+   Future<String> getUserName() async {
+    final user = auth.currentUser;
+    if (user != null) {
+      final doc = await userDataRef.doc(user.uid).get();
+      final data = doc.data() as Map<String, dynamic>?;
+      return data?['Name'] ?? 'User';
+    }
+    return 'User';
+  }
 
   Future<bool> signIn({
     required String email,
