@@ -17,24 +17,17 @@ class ChatPage extends StatefulWidget {
 }
 
 class _ChatPageState extends State<ChatPage> {
-  // Text controller
   final TextEditingController _messageController = TextEditingController();
-
-  // Chat and auth services
   final ChatService _chatService = ChatService();
   final FireHelper _fireHelper = FireHelper();
-
-  // For text field focus
   FocusNode myFocusNode = FocusNode();
-
-  // Scroll controller
   final ScrollController _scrollController = ScrollController();
+  String? receiverName;
 
   @override
   void initState() {
     super.initState();
-
-    // Delay scroll operation until after the widget has been built
+    _fetchReceiverName();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       scrollDown();
     });
@@ -50,6 +43,15 @@ class _ChatPageState extends State<ChatPage> {
     });
   }
 
+  Future<void> _fetchReceiverName() async {
+    final userData = await _fireHelper.userDataRef.doc(widget.receiverID).get();
+    if (userData.exists) {
+      setState(() {
+        receiverName = userData['Name'] ?? widget.receiverEmail;
+      });
+    }
+  }
+
   @override
   void dispose() {
     myFocusNode.dispose();
@@ -58,7 +60,6 @@ class _ChatPageState extends State<ChatPage> {
     super.dispose();
   }
 
-  // Send message
   Future<void> sendMessage() async {
     if (_messageController.text.isNotEmpty) {
       await _chatService.sendMessage(
@@ -105,14 +106,20 @@ class _ChatPageState extends State<ChatPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.receiverEmail),
+        title: Text(
+          receiverName ?? widget.receiverEmail,
+          style: const TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        backgroundColor: Colors.blueAccent,
         actions: [
           PopupMenuButton<String>(
             onSelected: (value) {
               if (value == 'clearChat') {
                 _clearChat();
               }
-              // Handle other menu options here
             },
             itemBuilder: (BuildContext context) {
               return [
@@ -120,13 +127,12 @@ class _ChatPageState extends State<ChatPage> {
                   value: 'clearChat',
                   child: Row(
                     children: [
-                      Icon(Icons.delete_forever),
+                      Icon(Icons.delete_forever, color: Colors.redAccent),
                       SizedBox(width: 8),
                       Text('Clear Chat'),
                     ],
                   ),
                 ),
-                // Add other menu items here if needed
               ];
             },
           ),
@@ -134,18 +140,15 @@ class _ChatPageState extends State<ChatPage> {
       ),
       body: Column(
         children: [
-          // Display all messages
           Expanded(
             child: _buildMessageList(),
           ),
-          // User input
           _buildUserInput(),
         ],
       ),
     );
   }
 
-  // Build message list
   Widget _buildMessageList() {
     final currentUser = _fireHelper.currentUser;
     if (currentUser == null) {
@@ -158,88 +161,87 @@ class _ChatPageState extends State<ChatPage> {
     return StreamBuilder<QuerySnapshot>(
       stream: _chatService.getMessages(senderID, receiverID),
       builder: (context, snapshot) {
-        // Error
         if (snapshot.hasError) {
           return Center(child: Text("Error: ${snapshot.error}"));
         }
-
-        // Loading
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: Text("Loading..."));
+          return const Center(child: CircularProgressIndicator());
         }
-
-        // No data
         if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
           return const Center(child: Text("No messages"));
         }
 
-        // Build list view
         return ListView(
           controller: _scrollController,
+          padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
           children: snapshot.data!.docs.map((doc) {
             final data =
-                doc.data() as Map<String, dynamic>?; // Handle null data
+                doc.data() as Map<String, dynamic>?;
             if (data == null) {
               return const SizedBox();
             }
-            return _buildMessageItem(data, doc.id); // Pass doc.id as messageId
+            return _buildMessageItem(data, doc.id);
           }).toList(),
         );
       },
     );
   }
 
-  // Build message item
   Widget _buildMessageItem(Map<String, dynamic> data, String messageId) {
-  bool isCurrentUser = data['senderID'] == _fireHelper.currentUser?.uid;
-  var alignment = isCurrentUser ? Alignment.centerRight : Alignment.centerLeft;
+    bool isCurrentUser = data['senderID'] == _fireHelper.currentUser?.uid;
+    var alignment =
+        isCurrentUser ? Alignment.centerRight : Alignment.centerLeft;
 
-  // Get the timestamp
-  Timestamp timestamp = data['timestamp'];
+    Timestamp timestamp = data['timestamp'];
 
-  return ListTile(
-    title: Container(
-      alignment: alignment,
-      child: Column(
-        crossAxisAlignment: isCurrentUser ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4.0),
+      child: Align(
+        alignment: alignment,
+        child: Column(
+          crossAxisAlignment: isCurrentUser
+              ? CrossAxisAlignment.end
+              : CrossAxisAlignment.start,
+          children: [
+            ChatSquare(
+              message: data["message"],
+              isCurrentUser: isCurrentUser,
+              messageId: messageId,
+              userID: data["senderID"],
+              timestamp: timestamp,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildUserInput() {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Row(
         children: [
-          ChatSquare(
-            message: data["message"],
-            isCurrentUser: isCurrentUser,
-            messageId: messageId,
-            userID: data["senderID"],
-            timestamp: timestamp, // Pass the timestamp here
+          Expanded(
+            child: CustomeTextfield(
+              controller: _messageController,
+              hintText: "Type a message...",
+              obscureText: false,
+              focusNode: myFocusNode,
+            ),
+          ),
+          const SizedBox(width: 8),
+          Container(
+            decoration: const BoxDecoration(
+              color: Colors.blueAccent,
+              shape: BoxShape.circle,
+            ),
+            child: IconButton(
+              onPressed: sendMessage,
+              icon: const Icon(Icons.send, color: Colors.white),
+            ),
           ),
         ],
       ),
-    ),
-  );
-}
-
-
-  // Message input
-  Widget _buildUserInput() {
-    return Row(
-      children: [
-        Expanded(
-          child: CustomeTextfield(
-            controller: _messageController,
-            hintText: "Type a message",
-            obscureText: false,
-            focusNode: myFocusNode,
-          ),
-        ),
-        Container(
-          decoration: const BoxDecoration(
-            color: Colors.green,
-            shape: BoxShape.circle,
-          ),
-          child: IconButton(
-            onPressed: sendMessage,
-            icon: const Icon(Icons.arrow_upward, color: Colors.white),
-          ),
-        ),
-      ],
     );
   }
 }

@@ -10,7 +10,7 @@ class ChatSquare extends StatelessWidget {
   final bool isCurrentUser;
   final String messageId;
   final String userID;
-  final Timestamp timestamp; // Add Timestamp field
+  final Timestamp timestamp;
 
   const ChatSquare({
     super.key,
@@ -18,10 +18,9 @@ class ChatSquare extends StatelessWidget {
     required this.isCurrentUser,
     required this.messageId,
     required this.userID,
-    required this.timestamp, // Add Timestamp parameter
+    required this.timestamp,
   });
 
-  // Show options
   void _showOptions(BuildContext context, String messageId, String userID) {
     showModalBottomSheet(
       context: context,
@@ -57,7 +56,6 @@ class ChatSquare extends StatelessWidget {
     );
   }
 
-  // Report message
   void _reportMessage(BuildContext context, String messageId, String userID) {
     showDialog(
       context: context,
@@ -84,7 +82,6 @@ class ChatSquare extends StatelessWidget {
     );
   }
 
-  // Block user
   void _blockUser(BuildContext context, String userID) {
     showDialog(
       context: context,
@@ -117,53 +114,97 @@ class ChatSquare extends StatelessWidget {
 
     Color backgroundColor;
     Color textColor;
-    Color timeColor;
 
     if (isCurrentUser) {
-      backgroundColor =
-          isDarkMode ? Colors.green.shade600 : Colors.grey.shade500;
-      textColor = Colors.white;
-      timeColor = isDarkMode ? Colors.white70 : Colors.black54;
+      backgroundColor = isDarkMode
+          ? Colors.lightBlue.shade300
+          : Colors.lightGreenAccent.shade100;
+      textColor = Colors.black;
     } else {
-      backgroundColor =
-          isDarkMode ? Colors.grey.shade700 : Colors.grey.shade300;
-      textColor = isDarkMode ? Colors.white : Colors.black;
-      timeColor = isDarkMode ? Colors.white70 : Colors.black54;
+      backgroundColor = isDarkMode
+          ? Colors.deepPurple.shade200
+          : Colors.orangeAccent.shade100;
+      textColor = isDarkMode ? Colors.black : Colors.black;
     }
 
-    // Format the timestamp
     String formattedTime = DateFormat('hh:mm a').format(timestamp.toDate());
 
     return GestureDetector(
       onLongPress: () {
         if (!isCurrentUser) {
-          // Show options
           _showOptions(context, messageId, userID);
         }
       },
-      child: Container(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(12),
-          color: backgroundColor,
-        ),
-        padding: const EdgeInsets.all(16),
-        margin: const EdgeInsets.symmetric(vertical: 2, horizontal: 0),
-        child: Column(
-          crossAxisAlignment:
-              isCurrentUser ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+      child: Align(
+        alignment: isCurrentUser ? Alignment.centerRight : Alignment.centerLeft,
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
           children: [
-            Text(
-              message,
-              style: TextStyle(color: textColor),
-            ),
-            const SizedBox(height: 4), 
-            Text(
-              formattedTime,
-              style: TextStyle(
-                color: timeColor,
-                fontSize: 12,
+            if (!isCurrentUser)
+              const CircleAvatar(
+                radius: 20,
+                backgroundImage: NetworkImage(
+                    'https://img.freepik.com/premium-vector/vector-professional-icon-business-illustration-line-symbol-people-management-career-set-c_1013341-74706.jpg'),
+              ),
+            if (!isCurrentUser) const SizedBox(width: 8),
+            Flexible(
+              child: Container(
+                padding: const EdgeInsets.all(15),
+                margin: isCurrentUser
+                    ? const EdgeInsets.only(bottom: 10, left: 50)
+                    : const EdgeInsets.only(bottom: 10, right: 50),
+                constraints: BoxConstraints(
+                    maxWidth: MediaQuery.of(context).size.width * 0.7),
+                decoration: BoxDecoration(
+                  color: backgroundColor,
+                  borderRadius: isCurrentUser
+                      ? const BorderRadius.only(
+                          topLeft: Radius.circular(15),
+                          topRight: Radius.circular(15),
+                          bottomLeft: Radius.circular(15),
+                        )
+                      : const BorderRadius.only(
+                          topLeft: Radius.circular(15),
+                          topRight: Radius.circular(15),
+                          bottomRight: Radius.circular(15),
+                        ),
+                  border: Border.all(color: Colors.blue.shade100),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.1),
+                      spreadRadius: 1,
+                      blurRadius: 10,
+                      offset: const Offset(0, 3),
+                    ),
+                  ],
+                ),
+                child: Column(
+                  crossAxisAlignment: isCurrentUser
+                      ? CrossAxisAlignment.end
+                      : CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      message,
+                      style: TextStyle(color: textColor),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      formattedTime,
+                      style: TextStyle(
+                        color: isCurrentUser ? Colors.black87 : Colors.black54,
+                        fontSize: 12,
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
+            if (isCurrentUser) const SizedBox(width: 10),
+            if (isCurrentUser)
+              const CircleAvatar(
+                  radius: 20,
+                  backgroundImage: NetworkImage(
+                      'https://img.freepik.com/premium-vector/vector-professional-icon-business-illustration-line-symbol-people-management-career-set-c_1013341-74706.jpg')),
           ],
         ),
       ),
