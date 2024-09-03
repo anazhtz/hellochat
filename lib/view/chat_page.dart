@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:hellochat/components/appcolor.dart';
 import 'package:hellochat/components/chat_square.dart';
 import 'package:hellochat/services/chat_services/chat_service.dart';
 import '../components/custome_textfield.dart';
@@ -113,7 +114,7 @@ class _ChatPageState extends State<ChatPage> {
             fontWeight: FontWeight.bold,
           ),
         ),
-        backgroundColor: Colors.blueAccent,
+        backgroundColor: AppColors.primary,
         actions: [
           PopupMenuButton<String>(
             onSelected: (value) {

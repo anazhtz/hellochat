@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:hellochat/components/appcolor.dart';
 import 'package:hellochat/view/login_page.dart';
 import 'package:hellochat/view/settings_page.dart';
 
@@ -35,65 +36,91 @@ class MyDrawer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Drawer(
-      backgroundColor: Theme.of(context).colorScheme.surface,
+      backgroundColor: AppColors.background, 
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Column(
-            children: [
-              DrawerHeader(
-                decoration: BoxDecoration(
-                  color: Colors.grey,
-                  border: Border(
-                    bottom: BorderSide(
-                      color: Colors.grey,
-                      width: 0.0,
-                    ),
+          Container(
+            color: AppColors.primary,
+            child: Column(
+              children: [
+                DrawerHeader(
+                  decoration: const BoxDecoration(
+                    color: AppColors.primary,
+                    borderRadius: BorderRadius.vertical(bottom: Radius.circular(16)), // Rounded corners
+                  ),
+                  child: Row(
+                    children: [
+                      const CircleAvatar(
+                        radius: 30,
+                        backgroundImage: NetworkImage(
+                          'https://img.freepik.com/premium-vector/vector-professional-icon-business-illustration-line-symbol-people-management-career-set-c_1013341-74706.jpg',
+                        ),
+                      ),
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: Text(
+                          'Hello, User!',
+                          style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                              ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-                child: Center(
-                  child: Icon(
-                    Icons.message,
-                    color: Colors.white, // Icon color
-                    size: 40,
-                  ),
-                ),
-              ),
-              //home list tile
-              Padding(
-                padding: const EdgeInsets.only(left: 25),
-                child: ListTile(
-                  title: const Text("H O M E"),
-                  leading: const Icon(Icons.home),
-                  onTap: () {
-                    //pop the drawer
-                    Navigator.pop(context);
-                  },
-                ),
-              ),
-              //setting list tile
-              Padding(
-                padding: const EdgeInsets.only(left: 25),
-                child: ListTile(
-                  title: const Text("S E T T I N G S"),
-                  leading: const Icon(Icons.settings),
-                  onTap: () {
-                    //pop the drawer
-                    Navigator.pop(context);
-                    // Navigate to settings page
-                  Get.to(() => const SettingsPage());
-                  },
-                ),
-              ),
-            ],
+               Column(
+  children: [
+    ListTile(
+      contentPadding: const EdgeInsets.symmetric(horizontal: 16),
+      tileColor: AppColors.primaryLight,
+      title: const Text("H O M E", style: TextStyle(color: Colors.white)),
+      leading: const Icon(Icons.home, color: Colors.white),
+      onTap: () {
+        Navigator.pop(context);
+      },
+    ),
+    Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16),
+      height: 2,
+      color: Colors.white.withOpacity(0.3), // Decorative line
+    ),
+    ListTile(
+      contentPadding: const EdgeInsets.symmetric(horizontal: 16),
+      tileColor: AppColors.primaryLight,
+      title: const Text("S E T T I N G S", style: TextStyle(color: Colors.white)),
+      leading: const Icon(Icons.settings, color: Colors.white),
+      onTap: () {
+        Navigator.pop(context);
+        Get.to(() => const SettingsPage());
+      },
+    ),
+  ],
+)
+
+              ],
+            ),
           ),
-          //logout list tile
+          const Spacer(),
           Padding(
-            padding: const EdgeInsets.only(left: 25, bottom: 25),
-            child: ListTile(
-              title: const Text("L O G O U T"),
-              leading: const Icon(Icons.logout),
-              onTap: _signOut,
+            padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
+            child: ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.primary,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                padding: const EdgeInsets.symmetric(vertical: 16),
+              ),
+              onPressed: _signOut,
+              child: const Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.logout, color: Colors.white),
+                  SizedBox(width: 8),
+                  Text("L O G O U T", style: TextStyle(color: Colors.white)),
+                ],
+              ),
             ),
           ),
         ],
