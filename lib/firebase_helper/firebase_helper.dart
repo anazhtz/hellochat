@@ -9,6 +9,14 @@ class FireHelper {
 
   User? get currentUser => auth.currentUser;
 
+   Future<void> updateOnlineStatus(bool isOnline) async {
+    final user = auth.currentUser;
+    if (user != null) {
+      await userDataRef.doc(user.uid).update({'isOnline': isOnline});
+    }
+  }
+
+
   Future<String?> signUp({
     required String email,
     required String password,

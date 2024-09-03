@@ -107,20 +107,21 @@ class _RegisterPageState extends State<RegisterPage> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 //logo
-                Icon(
-                  Icons.message,
-                  size: 60,
-                  color: Colors.white,
+                const Image(
+                  image: AssetImage("assets/Designer__4_-removebg-preview.png"),
+                  width: 150,
+                  height: 150,
                 ),
                 const SizedBox(
                   height: 50,
                 ),
                 //welcome message
-                Text(
+                const Text(
                   "Let's create an account for you",
                   style: TextStyle(
                       color: Colors.white,
-                      fontSize: 16),
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(
                   height: 25,
@@ -180,16 +181,16 @@ class _RegisterPageState extends State<RegisterPage> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text(
+                    const Text(
                       "Already have an account? ",
-                      style: TextStyle(
-                          color: Colors.white54),
+                      style: TextStyle(color: Colors.white54),
                     ),
                     GestureDetector(
                       onTap: widget.onTap,
                       child: const Text(
                         "Login now",
-                        style: TextStyle(fontWeight: FontWeight.bold,color: Colors.white),
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold, color: Colors.white),
                       ),
                     )
                   ],

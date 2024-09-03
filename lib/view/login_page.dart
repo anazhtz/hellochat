@@ -76,16 +76,19 @@ class _LoginPageState extends State<LoginPage> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 //logo
-                const Icon(
-                  Icons.message,
-                  size: 60,
-                  color: Colors.white,
+                const Image(
+                  image: AssetImage("assets/Designer__4_-removebg-preview.png"),
+                  width: 150,
+                  height: 150,
                 ),
                 const SizedBox(height: 50),
                 //welcome message
                 const Text(
                   "Welcome to HelloChat",
-                  style: TextStyle(color: Colors.white, fontSize: 16),
+                  style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 25),
                 //email textfield
