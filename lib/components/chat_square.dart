@@ -11,7 +11,7 @@ class ChatSquare extends StatelessWidget {
   final String messageId;
   final String userID;
   final Timestamp timestamp;
-
+  
   const ChatSquare({
     super.key,
     required this.message,
